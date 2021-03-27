@@ -17,7 +17,7 @@ public:
     void* allocate(size_t bytes);  // replaces malloc
     void deallocate(void* ptr);  // replaces free
     
-    MemoryManager(void* ptr, size_t size);
+    MemoryManager(size_t size);
     ~MemoryManager();
 private:
     

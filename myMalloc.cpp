@@ -8,10 +8,10 @@
 #include "myMalloc.hpp"
 #include <sys/mman.h>
 
-MemoryManager::MemoryManager(void *ptr, size_t size) { //
-    tableEntry->pointer = (TableEntry*)mmap(nullptr, hashtable_size, PROT_READ | PROT_WRITE, MAP_ANON | MAP_SHARED, -1, 0);
+MemoryManager::MemoryManager(size_t size) { //
+    tableEntry->pointer = (TableEntry*)mmap(nullptr, size, PROT_READ | PROT_WRITE, MAP_ANON | MAP_SHARED, -1, 0);
 
-    tableEntry->size = hashtable_size; //size used inside the mmap
+    tableEntry->size = size; //size used inside the mmap
 }
 
 void* MemoryManager::allocate(size_t bytes) {
@@ -29,41 +29,3 @@ void MemoryManager::tableInsert(void *ptr, size_t size, size_t index) {
     //Hashtable[index] = // struct(ptr, size);
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//MemoryManager::MemoryManager(void *ptr, size_t size) { //
-//    tableEntry->pointer = (TableEntry*)mmap(nullptr, hashtable_size, PROT_READ | PROT_WRITE, MAP_ANON | MAP_SHARED, -1, 0);
-//
-//    tableEntry->size = hashtable_size; //size used inside the mmap
-//}
