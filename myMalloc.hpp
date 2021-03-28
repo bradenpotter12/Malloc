@@ -18,8 +18,8 @@ public:
     void deallocate(void* ptr);  // replaces free
     
     MemoryManager(size_t size);
-    ~MemoryManager();
-private:
+    //~MemoryManager();
+// private:
     
     struct TableEntry {
         void* pointer;
@@ -29,13 +29,14 @@ private:
     TableEntry *tableEntry;
     size_t entrySize;
     
+    int hashTableSize = 0;
+    int hashTableCapacity = 10;
     TableEntry hashTable[10];
-    int hashTableSize = 10;
-    int hashTableCapacity;
+    
     void tableInsert(void *ptr, size_t size, size_t index);
     void growTable();
     void deleteTableElement();
-    
+    void printHashTable();
 };
 
 
