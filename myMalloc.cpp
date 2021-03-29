@@ -73,7 +73,9 @@ void MemoryManager::growTable() {
     for (int i = 0; i < oldCapacity; i++) {
         newTable[i] = hashTable[i];
     }
+    
     hashTable = newTable;
+    
 }
 
 void MemoryManager::printHashTable() {
@@ -82,3 +84,19 @@ void MemoryManager::printHashTable() {
     }
 }
 
+void MemoryManager::deallocate(void* ptr) {
+    
+    for (int i = 0; i < hashTableCapacity; i++) {
+        if (ptr == hashTable[i].pointer) {
+            
+            munmap(ptr, hashTable[i].size);
+            hashTable[i].pointer = nullptr;
+            hashTable[i].size = 0x0;
+            break;
+        }
+    }
+}
+
+void MemoryManager::tableRemove() {
+    
+}

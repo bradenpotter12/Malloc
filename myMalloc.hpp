@@ -34,8 +34,8 @@ public:
     TableEntry *hashTable;
     
     void tableInsert(void *ptr, size_t size, size_t index);
+    void tableRemove();
     void growTable();
-    void deleteTableElement();
     void printHashTable();
 };
 

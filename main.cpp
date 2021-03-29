@@ -19,7 +19,16 @@ void testTable(int numOfTimes) {
 
 int main(int argc, const char * argv[]) {
     
-    testTable(12);
+    MemoryManager m(10);
+    
+    m.printHashTable();
+    std::cout << "\n";
+    void* ptr = m.allocate(5);
+    m.printHashTable();
+    std::cout << "\n";
+    m.deallocate(ptr);
+    m.printHashTable();
+    std::cout << "\n";
     
     return 0;
 }
