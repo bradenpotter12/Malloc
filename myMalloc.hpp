@@ -30,8 +30,8 @@ public:
     size_t entrySize;
     
     int hashTableSize = 0;
-    int hashTableCapacity = 10;
-    TableEntry hashTable[10];
+    size_t hashTableCapacity;
+    TableEntry *hashTable;
     
     void tableInsert(void *ptr, size_t size, size_t index);
     void growTable();

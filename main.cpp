@@ -9,7 +9,7 @@
 #include "myMalloc.hpp"
 
 void testTable(int numOfTimes) {
-    MemoryManager m(1);
+    MemoryManager m(10);
     for (int i = 0; i < numOfTimes; i++) {
         m.printHashTable();
         std::cout << "\n";
@@ -19,7 +19,7 @@ void testTable(int numOfTimes) {
 
 int main(int argc, const char * argv[]) {
     
-    testTable(11);
+    testTable(12);
     
     return 0;
 }

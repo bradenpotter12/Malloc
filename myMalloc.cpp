@@ -9,14 +9,14 @@
 #include <sys/mman.h>
 #include <iostream>
 
-MemoryManager::MemoryManager(size_t size) { //
-    //tableEntry->pointer = (TableEntry*)mmap(nullptr, size, PROT_READ | PROT_WRITE, MAP_ANON | MAP_SHARED, -1, 0);
+MemoryManager::MemoryManager(size_t capacity) { //
+    hashTable = (TableEntry*)mmap(nullptr, capacity, PROT_READ | PROT_WRITE, MAP_ANON | MAP_SHARED, -1, 0);
 
-    //tableEntry->size = size; //size used inside the mmap
+    hashTableCapacity = capacity;
     
-    for (int i = 0; i < hashTableCapacity; i++) {
-        hashTable[i].pointer = 0x0;
-    }
+//    for (int i = 0; i < hashTableCapacity; i++) {
+//        hashTable[i].pointer = 0x0;
+//    }
 }
 
 void* MemoryManager::allocate(size_t bytes) {
@@ -38,6 +38,7 @@ void MemoryManager::tableInsert(void *ptr, size_t size, size_t index) {
         
         if (hashTable[index].pointer == 0x0) {
             hashTable[index] = tableEntry;
+            hashTableSize++;
             break;
         }
         else {
@@ -51,21 +52,28 @@ void MemoryManager::tableInsert(void *ptr, size_t size, size_t index) {
         }
     }
     
-    // check exceeded index grow table
+    // check if table needs to grow
+    double amountUsed = ((double)hashTableSize / (double)hashTableCapacity);
     
-    
+    if (amountUsed > .6) {
+        growTable();
+    }
     
 }
 
 void MemoryManager::growTable() {
+    size_t oldCapacity = hashTableCapacity;
     hashTableCapacity *= 2;
-    TableEntry newTable[hashTableCapacity];
-    for (int i = 0; i < hashTableSize; i++) {
+    TableEntry *newTable = (TableEntry*)mmap(nullptr, hashTableCapacity, PROT_READ | PROT_WRITE, MAP_ANON | MAP_SHARED, -1, 0);
+    
+    for (int i = 0; i < hashTableCapacity; i++) {
+        newTable[i].pointer = 0x0;
+    }
+    
+    for (int i = 0; i < oldCapacity; i++) {
         newTable[i] = hashTable[i];
     }
-    //hashTable = newTable;
-    TableEntry* temp = newTable;
-    //hashTable = temp;
+    hashTable = newTable;
 }
 
 void MemoryManager::printHashTable() {
