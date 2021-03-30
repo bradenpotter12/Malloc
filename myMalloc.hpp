@@ -18,7 +18,7 @@ public:
     void deallocate(void* ptr);  // replaces free
     
     MemoryManager(size_t size);
-    //~MemoryManager();
+    ~MemoryManager();
 // private:
     
     struct TableEntry {
@@ -34,8 +34,8 @@ public:
     TableEntry *hashTable;
     
     void tableInsert(void *ptr, size_t size, size_t index);
-    void tableRemove();
     void growTable();
+    
     void printHashTable();
 };
 

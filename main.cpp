@@ -29,6 +29,29 @@ int main(int argc, const char * argv[]) {
     m.deallocate(ptr);
     m.printHashTable();
     std::cout << "\n";
+    m.allocate(5);
+    m.printHashTable();
+    std::cout << "\n";
+    m.allocate(5);
+    m.printHashTable();
+    std::cout << "\n";
+    m.allocate(5);
+    m.printHashTable();
+    std::cout << "\n";
+    m.allocate(5);
+    m.printHashTable();
+    std::cout << "\n";
+    m.allocate(5);
+    m.printHashTable();
+    std::cout << "\n";
+    m.allocate(5);
+    m.printHashTable();
+    std::cout << "\n";
+    // Table grows after 7th element is added which is
+    // greater than 60% of capacity of 10 elements
+    m.allocate(5);
+    m.printHashTable();
+    std::cout << "\n";
     
     return 0;
 }

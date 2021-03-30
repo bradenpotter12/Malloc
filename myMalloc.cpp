@@ -9,14 +9,16 @@
 #include <sys/mman.h>
 #include <iostream>
 
-MemoryManager::MemoryManager(size_t capacity) { //
-    hashTable = (TableEntry*)mmap(nullptr, capacity, PROT_READ | PROT_WRITE, MAP_ANON | MAP_SHARED, -1, 0);
+MemoryManager::MemoryManager(size_t capacity) {
+    TableEntry *tempPtr = (TableEntry*)mmap(nullptr, capacity, PROT_READ | PROT_WRITE, MAP_ANON | MAP_SHARED, -1, 0);
 
+    hashTable = tempPtr;
     hashTableCapacity = capacity;
     
-//    for (int i = 0; i < hashTableCapacity; i++) {
-//        hashTable[i].pointer = 0x0;
-//    }
+    // store hashtable's ptr and size in the hashtable;
+    //size_t index = std::hash<void *>()(tempPtr);
+    //tableInsert(tempPtr, capacity, index % hashTableCapacity);
+    
 }
 
 void* MemoryManager::allocate(size_t bytes) {
@@ -66,16 +68,27 @@ void MemoryManager::growTable() {
     hashTableCapacity *= 2;
     TableEntry *newTable = (TableEntry*)mmap(nullptr, hashTableCapacity, PROT_READ | PROT_WRITE, MAP_ANON | MAP_SHARED, -1, 0);
     
+    // storing ptr for new table in the new hashTable
+    //size_t index = std::hash<void *>()(newTable);
+    //tableInsert(newTable, hashTableCapacity, index % hashTableCapacity);
+    
     for (int i = 0; i < hashTableCapacity; i++) {
         newTable[i].pointer = 0x0;
     }
     
+    // copy values from old hashtable to new hashtable
     for (int i = 0; i < oldCapacity; i++) {
-        newTable[i] = hashTable[i];
+        // don't copy lazy deletes
+        if (hashTable[i].pointer != nullptr) {
+            newTable[i] = hashTable[i];
+            deallocate(hashTable[i].pointer);  // deallocate ptr in old hashTable
+        }
     }
     
+    TableEntry *tempPtr = hashTable;
     hashTable = newTable;
-    
+    deallocate(tempPtr);  // deallocate original hashTable
+    newTable = nullptr;
 }
 
 void MemoryManager::printHashTable() {
@@ -87,16 +100,32 @@ void MemoryManager::printHashTable() {
 void MemoryManager::deallocate(void* ptr) {
     
     for (int i = 0; i < hashTableCapacity; i++) {
+        
+        // find pointer in hash table
         if (ptr == hashTable[i].pointer) {
             
+            // deallocate memory
             munmap(ptr, hashTable[i].size);
+            
+            // remove element from hashTable
             hashTable[i].pointer = nullptr;
             hashTable[i].size = 0x0;
+            hashTableSize--;
             break;
         }
     }
 }
 
-void MemoryManager::tableRemove() {
-    
+// unmap pointers in hashtable
+// then unmap hashtable itself in the destructor
+MemoryManager::~MemoryManager() {
+    for (int i = 0; i < hashTableCapacity; i++) {
+        if (hashTable[i].pointer != 0x0 && hashTable[i].pointer != nullptr) {
+            deallocate(hashTable[i].pointer);
+        }
+    }
+    deallocate(hashTable);
 }
+
+
+
